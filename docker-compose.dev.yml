@@ -1,0 +1,17 @@
+# docker-compose.yml
+version: "3.9"
+
+services:
+  mmpose:
+    image: mmpose-mmpose-dev         # 這是你剛剛 build 的 image 名稱
+    runtime: nvidia                # 使用 GPU
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "8000:8000"                # 對外開啟 8000 port
+    volumes:
+      - .:/workspace               # 將本機 app.py 映射到容器中
+    working_dir: /workspace        # 切換工作目錄，讓你可以直接執行 app.py
+    command: /bin/bash             # 啟動後不自動跑 uvicorn，讓你手動進行開發
+    tty: true
+    stdin_open: true
