@@ -1,2 +1,7 @@
 # mmpose_api
 mmpose_api
+本地開發使用Dockerfile配合docker compose
+
+部屬到gcp使用
+Dockerfile_cloud_run
+會自動開啟app.py定義的fastapi路由服務
