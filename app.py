@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mmpose.apis import MMPoseInferencer
 from fastapi.responses import JSONResponse
 from mmpose.utils import register_all_modules
+import base64
 register_all_modules()
 
 app = FastAPI()
@@ -18,11 +19,13 @@ app.add_middleware(
     allow_headers=["*"],  # 允許所有 headers
 )
 
+# 實例化MMPoseInferencer
 inferencer = MMPoseInferencer(
     pose2d="body",
     device="cuda:0"  # 若 Cloud Run 無 GPU，可改 'cpu'
 )
 
+# numpy不能直接傳回前端
 def clean_numpy(obj):
     if isinstance(obj, np.ndarray):
         return obj.tolist()
@@ -39,20 +42,32 @@ def clean_numpy(obj):
 
 @app.post("/pose")
 async def estimate_pose(file: UploadFile = File(...)):
+    # 把圖片轉成numpy
     image_bytes = await file.read()
     nparr = np.frombuffer(image_bytes, np.uint8)
     img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
     if img_np is None:
         return {"error": "Cannot decode image"}
 
+    # 丟入numpy獲得推論結果
     result_gen = inferencer(img_np)
     try:
         result = next(result_gen)
     except StopIteration:
         return {"error": "No pose detected."}
 
+    # 取得骨架座標
     predictions = result.get("predictions")
     cleaned = clean_numpy(predictions)
 
-    return JSONResponse(content={"predictions": cleaned})
+    # 處理 visualization 圖片為 base64
+    vis_img = result.get("visualization")  # 是 RGB 格式的 np.ndarray
+    _, buffer = cv2.imencode(".jpg", cv2.cvtColor(vis_img, cv2.COLOR_RGB2BGR))
+    vis_base64 = base64.b64encode(buffer).decode("utf-8")
+
+    # 回傳JSONResponse
+    return JSONResponse(content={
+        "predictions": cleaned,
+        "visualization": vis_base64
+    })
+
