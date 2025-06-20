@@ -50,7 +50,7 @@ async def estimate_pose(file: UploadFile = File(...)):
         return {"error": "Cannot decode image"}
 
     # 丟入numpy獲得推論結果
-    result_gen = inferencer(img_np)
+    result_gen = inferencer(img_np,return_vis=True)
     try:
         result = next(result_gen)
     except StopIteration:
