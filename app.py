@@ -62,9 +62,13 @@ async def estimate_pose(file: UploadFile = File(...)):
 
     # 處理 visualization 圖片為 base64
     vis_img = result.get("visualization")  # 是 RGB 格式的 np.ndarray
-    _, buffer = cv2.imencode(".jpg", cv2.cvtColor(vis_img, cv2.COLOR_RGB2BGR))
-    vis_base64 = base64.b64encode(buffer).decode("utf-8")
-
+    
+    if vis_img is None or not isinstance(vis_img, np.ndarray) or vis_img.size == 0:
+        vis_base64 = None
+    else:
+        _, buffer = cv2.imencode(".jpg", cv2.cvtColor(vis_img, cv2.COLOR_RGB2BGR))
+        vis_base64 = base64.b64encode(buffer).decode("utf-8")
+        
     # 回傳JSONResponse
     return JSONResponse(content={
         "predictions": cleaned,
