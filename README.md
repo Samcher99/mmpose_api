@@ -24,7 +24,7 @@
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
-啟動後，API 預設會在 [http://localhost:8000](http://localhost:8000) 提供服務。
+啟動後，docker-compose.dev.yml會開啟一個bash環境 可以在此開發app.py 並進行測試。
 
 ---
 
