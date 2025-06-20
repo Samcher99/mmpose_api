@@ -64,5 +64,8 @@ COPY app.py /workspace/app.py
 # 宣告容器將在 8000 端口上監聽。這是一個資訊，用於 Docker 端口映射。
 EXPOSE 8000
 
+# 啟動之前切換目錄到workspace這裡才有app.py(改這裡)
+WORKDIR /workspace
+
 # 定義容器啟動時執行的命令。
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
