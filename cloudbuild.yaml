@@ -1,0 +1,35 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'build',
+      '-t',
+      'gcr.io/bustling-joy-463213-u1/mmpose-api:$SHORT_SHA',
+      '.'
+    ]
+
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'gcr.io/bustling-joy-463213-u1/mmpose-api:$SHORT_SHA'
+    ]
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args:
+    [
+      'run',
+      'deploy',
+      'mmpose-api',
+      '--image',
+      'gcr.io/bustling-joy-463213-u1/mmpose-api:$SHORT_SHA',
+      '--region',
+      'europe-west1',
+      '--platform',
+      'managed',
+      '--allow-unauthenticated'
+    ]
+
+images:
+  - 'gcr.io/bustling-joy-463213-u1/mmpose-api:$SHORT_SHA'
