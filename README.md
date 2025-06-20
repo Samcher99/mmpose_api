@@ -44,17 +44,17 @@ docker-compose -f docker-compose.dev.yml up --build
 使用 連結存放區方式部屬 選擇`Dockerfile_cloud_run` 建立專屬容器：
 
 ```bash
-# Step 1: 進入google cloud run控制台
+Step 1: 進入google cloud run控制台
 
-# Step 2: 點擊上方 服務 連結存放區
+Step 2: 點擊上方 服務 連結存放區
 
-# Step 3: 從存放區持續部署 (原始碼或函式)
+Step 3: 從存放區持續部署 (原始碼或函式)
 
-# Step 4: 設定cloud run bulid
+Step 4: 設定cloud run bulid
 
-# Step 5: 建構類型 Dockerfile
+Step 5: 建構類型 Dockerfile
 
-# Step 6: 選擇正確 Dockerfile 此專案選擇Dockerfile_cloud_run
+Step 6: 選擇正確 Dockerfile 此專案選擇Dockerfile_cloud_run
 ```
 
 部署後即會自動啟動 `app.py` 中定義的 FastAPI 路由。
