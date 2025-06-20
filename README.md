@@ -24,8 +24,12 @@
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
-啟動後，docker-compose.dev.yml會開啟一個bash環境 可以在此開發app.py 並進行測試。
-
+啟動後，docker-compose.dev.yml會開啟一個bash環境 
+此環境開啟一個8000 port連接到本機 並將本機當前目錄對應到docker環境的/workspace
+這時可以在本機修改app.py docker中的workspace/app.py會跟著改變
+修改完畢在docker中下指令uvicorn app:app --host 0.0.0.0 --port 8000
+會將api服務設置在port 8000對外連出來即可進行測試
+可以在此開發app.py 並進行測試。
 ---
 
 ## ☁️ 雲端部署（GCP Cloud Run）
