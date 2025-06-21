@@ -6,6 +6,8 @@ from mmpose.apis import MMPoseInferencer
 from fastapi.responses import JSONResponse
 from mmpose.utils import register_all_modules
 import base64
+import tempfile
+import os
 
 # 註冊所有模塊（必要的步驟）
 register_all_modules()
@@ -82,8 +84,14 @@ async def estimate_pose(file: UploadFile = File(...)):
 async def estimate_pose_video(file: UploadFile = File(...)):
     # 讀取影片文件
     video_bytes = await file.read()
-    np_arr = np.frombuffer(video_bytes, np.uint8)
-    cap = cv2.VideoCapture(np_arr)
+
+    # 創建臨時檔案來儲存上傳的影片
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video_file:
+        video_path = temp_video_file.name
+        temp_video_file.write(video_bytes)
+
+    # 使用 cv2 打開臨時影片檔案
+    cap = cv2.VideoCapture(video_path)
 
     if not cap.isOpened():
         return {"error": "Cannot open video file"}
@@ -91,6 +99,7 @@ async def estimate_pose_video(file: UploadFile = File(...)):
     frames = []
     frame_idx = 0
 
+    # 讀取影片中的每一幀
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -121,5 +130,10 @@ async def estimate_pose_video(file: UploadFile = File(...)):
             "visualization": vis_base64
         })
 
+    # 刪除臨時檔案
+    os.remove(video_path)
+
+    # 返回結果
     return JSONResponse(content={"frames": frame_results})
+
 
