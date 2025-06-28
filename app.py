@@ -136,4 +136,9 @@ async def estimate_pose_video(file: UploadFile = File(...)):
     # 返回結果
     return JSONResponse(content={"frames": frame_results})
 
+@app.get("/")
+def root():
+    return {"message": "Welcome to the MMPose API"}
+
+
 
